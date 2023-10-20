@@ -15,13 +15,7 @@ const TodoItem = ({ id, completed, title, toggleTodo }: TodoItemProps) => {
 
   return (
     <li className={'flex gap-1 items-center'}>
-      <input
-        id={id}
-        type='checkbox'
-        defaultChecked={completed}
-        onChange={handleChange}
-        className={'cursor-pointer peer'}
-      />
+      <input id={id} type='checkbox' checked={completed} onChange={handleChange} className={'cursor-pointer peer'} />
       <label htmlFor={id} className={'peer-checked:line-through peer-checked:text-slate-500'}>
         {title}
       </label>
