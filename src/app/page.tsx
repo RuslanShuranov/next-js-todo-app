@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { prisma } from '@/db';
 import TodoItem from '@/components/TodoItem';
 
-const getTodos = () => {
+const getTodos = async () => {
   'use server';
   return prisma.todo.findMany();
 };
