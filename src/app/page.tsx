@@ -2,7 +2,10 @@ import Link from 'next/link';
 import { prisma } from '@/db';
 import TodoItem from '@/components/TodoItem';
 
-const getTodos = () => prisma.todo.findMany();
+const getTodos = () => {
+  'use server';
+  return prisma.todo.findMany();
+};
 
 const toggleTodo = async (id: string, completed: boolean) => {
   'use server';
