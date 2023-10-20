@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from 'next/link';
 import { prisma } from '@/db';
 import TodoItem from '@/components/TodoItem';
@@ -33,8 +34,8 @@ const Home = async () => {
       </header>
       <main>
         <ul className={'pl-4'}>
-          {todos.map((todo) => (
-            <TodoItem key={todo.id} {...todo} toggleTodo={toggleTodo} />
+          {todos.map(({ id, completed, title }) => (
+            <TodoItem key={id} id={id} completed={completed} title={title} toggleTodo={toggleTodo} />
           ))}
         </ul>
       </main>
