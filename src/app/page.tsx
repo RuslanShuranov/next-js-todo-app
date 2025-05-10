@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import TodoItem from '@/components/TodoItem';
 import {Todo} from ".prisma/client";
-import { getTodos, toggleTodo } from '@/actions/todoActions';
+import { getTodos, toggleTodo, deleteTodo } from '@/actions/todoActions';
 
 const Home = () => {
     const [todos, setTodos] = React.useState<Todo[]>([]);
@@ -30,6 +30,19 @@ const Home = () => {
         callGetTodos();
     }, []);
 
+    const handleDelete = async (id: string) => {
+        try {
+            const result = await deleteTodo(id);
+            if (result.success) {
+                setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
+            } else {
+                console.error("Failed to delete todo:", result.error);
+            }
+        } catch (err) {
+            console.error("Error deleting todo:", err);
+        }
+    };
+
   return (
     <>
       <header className={'flex justify-between mb-4 items-center'}>
@@ -52,7 +65,14 @@ const Home = () => {
               <p className="text-slate-300">No todos found. Create a new one!</p>
             ) : (
               todos.map(({ id, completed, title }) => (
-                <TodoItem key={id} id={id} completed={completed} title={title} toggleTodo={toggleTodo} />
+                <TodoItem 
+                  key={id} 
+                  id={id} 
+                  completed={completed} 
+                  title={title} 
+                  toggleTodo={toggleTodo}
+                  deleteTodo={handleDelete} 
+                />
               ))
             )}
           </ul>

@@ -40,3 +40,15 @@ export const createTodo = async (data: FormData) => {
     return { success: false, error: 'Failed to create todo. Please try again.' };
   }
 };
+
+export const deleteTodo = async (id: string) => {
+  try {
+    await prisma.todo.delete({
+      where: { id },
+    });
+    return { success: true };
+  } catch (err) {
+    console.error("Failed to delete todo:", err);
+    return { success: false, error: "Failed to delete todo. Please try again." };
+  }
+};
