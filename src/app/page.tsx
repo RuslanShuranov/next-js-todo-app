@@ -1,23 +1,34 @@
+"use client";
+
 import React from 'react';
 import Link from 'next/link';
-import { prisma } from '@/db';
 import TodoItem from '@/components/TodoItem';
+import {Todo} from ".prisma/client";
+import { getTodos, toggleTodo } from '@/actions/todoActions';
 
-const getTodos = async () => {
-  'use server';
-  return prisma.todo.findMany();
-};
+const Home = () => {
+    const [todos, setTodos] = React.useState<Todo[]>([]);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState<string | null>(null);
 
-const toggleTodo = async (id: string, completed: boolean) => {
-  'use server';
-  await prisma.todo.update({
-    where: { id },
-    data: { completed },
-  });
-};
+    React.useEffect(() => {
+        const callGetTodos = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const data = await getTodos();
+                setTodos(data);
+            } catch (err) {
+                console.error("Failed to fetch todos:", err);
+                setError("Failed to load todos. Please try again later.");
+                setTodos([]);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-const Home = async () => {
-  const todos = await getTodos();
+        callGetTodos();
+    }, []);
 
   return (
     <>
@@ -33,11 +44,19 @@ const Home = async () => {
         </Link>
       </header>
       <main>
-        <ul className={'pl-4'}>
-          {todos.map(({ id, completed, title }) => (
-            <TodoItem key={id} id={id} completed={completed} title={title} toggleTodo={toggleTodo} />
-          ))}
-        </ul>
+        {loading && <p className="text-slate-300">Loading todos...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {!loading && !error && (
+          <ul className={'pl-4'}>
+            {todos.length === 0 ? (
+              <p className="text-slate-300">No todos found. Create a new one!</p>
+            ) : (
+              todos.map(({ id, completed, title }) => (
+                <TodoItem key={id} id={id} completed={completed} title={title} toggleTodo={toggleTodo} />
+              ))
+            )}
+          </ul>
+        )}
       </main>
     </>
   );
