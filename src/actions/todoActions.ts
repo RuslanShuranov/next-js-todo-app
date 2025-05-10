@@ -4,7 +4,11 @@ import { prisma } from '@/db';
 import { redirect } from 'next/navigation';
 
 export const getTodos = async () => {
-  return prisma.todo.findMany();
+  return prisma.todo.findMany({
+    orderBy: {
+      completed: 'asc',
+    },
+  });
 };
 
 export const toggleTodo = async (id: string, completed: boolean) => {

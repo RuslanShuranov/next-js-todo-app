@@ -43,6 +43,24 @@ const Home = () => {
         }
     };
 
+    const handleToggle = async (id: string, completed: boolean) => {
+        try {
+            const result = await toggleTodo(id, completed);
+            if (result.success) {
+                setTodos(prevTodos => {
+                    const updatedTodos = prevTodos.map(todo => 
+                        todo.id === id ? { ...todo, completed } : todo
+                    );
+                    return updatedTodos.sort((a, b) => Number(a.completed) - Number(b.completed));
+                });
+            }
+            return result;
+        } catch (err) {
+            console.error("Error toggling todo:", err);
+            return { success: false, error: "Failed to update todo. Please try again." };
+        }
+    };
+
   return (
     <>
       <header className={'flex justify-between mb-4 items-center'}>
@@ -70,7 +88,7 @@ const Home = () => {
                   id={id} 
                   completed={completed} 
                   title={title} 
-                  toggleTodo={toggleTodo}
+                  toggleTodo={handleToggle}
                   deleteTodo={handleDelete} 
                 />
               ))
